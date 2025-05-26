@@ -62,7 +62,8 @@ public class MyScanCheck implements ScanCheck {
         GPTRequest gptRequest = gptResults.getLeft();
         GPTResponse gptResponse = gptResults.getRight();
 
-        if (gptResponse.getChoices() != null) {
+        // Check if we have a valid response with choices
+        if (gptResponse != null && gptResponse.getChoices() != null && !gptResponse.getChoices().isEmpty()) {
             String escapedPrompt = StringEscapeUtils.escapeHtml4(gptRequest.getPrompt().trim()).replace("\n", "<br />");
             String issueBackground = String.format(
                     "The OpenAI API generated a response using the following parameters:" + "<br>"
@@ -88,6 +89,32 @@ public class MyScanCheck implements ScanCheck {
                     null,
                     httpRequestResponse);
             auditIssues.add(auditIssue);
+        } else {
+            // Handle the case where there's no valid response
+            String errorMessage = "No response received from OpenAI API or the response was empty.";
+
+            // Check for API errors using the new hasError method
+            if (gptResponse != null && gptResponse.hasError()) {
+                errorMessage = "Error from OpenAI API: " + gptResponse.getErrorMessage();
+            }
+
+            AuditIssue errorIssue = AuditIssue.auditIssue(
+                    "GPT Analysis Failed",
+                    errorMessage,
+                    "The GPT analysis could not be completed. Please check your API key and settings.",
+                    httpRequestResponse.request().url(),
+                    AuditIssueSeverity.INFORMATION,
+                    AuditIssueConfidence.CERTAIN,
+                    "The analysis failed to generate insights for this request/response pair.",
+                    "Check that your OpenAI API key is valid and that you haven't exceeded your rate limits.",
+                    null,
+                    httpRequestResponse);
+            auditIssues.add(errorIssue);
+
+            // Log the error for debugging
+            if (MyBurpExtension.DEBUG) {
+                logging.logToOutput("[!] GPT analysis failed: " + errorMessage);
+            }
         }
 
         return auditIssues;
