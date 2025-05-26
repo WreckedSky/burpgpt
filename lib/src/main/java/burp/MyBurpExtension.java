@@ -30,7 +30,7 @@ public class MyBurpExtension implements BurpExtension, PropertyChangeListener {
     @Getter
     private String apiKey = "PLEASE_CHANGE_ME_OR_YOU_WILL_MAKE_THE_DEVELOPER_SAD";
     @Getter
-    List<String> modelIds = Arrays.asList("davinci", "ada", "babbage", "curie");
+    List<String> modelIds = Arrays.asList("gpt-3.5-turbo", "gpt-4");
     @Getter
     private int maxPromptSize = 1024;
     @Getter
