@@ -19,7 +19,7 @@ public class MyBurpExtension implements BurpExtension, PropertyChangeListener {
     public static final Boolean DEBUG = false;
 
     public static final String EXTENSION = "BurpGPT";
-    public static final String VERSION = "0.1.1";
+    public static final String VERSION = "0.1.2";
 
     private PropertyChangeSupport propertyChangeSupport;
     @Getter
@@ -30,7 +30,13 @@ public class MyBurpExtension implements BurpExtension, PropertyChangeListener {
     @Getter
     private String apiKey = "PLEASE_CHANGE_ME_OR_YOU_WILL_MAKE_THE_DEVELOPER_SAD";
     @Getter
-    List<String> modelIds = Arrays.asList("gpt-3.5-turbo", "gpt-4");
+    List<String> modelIds = Arrays.asList(
+        "gpt-3.5-turbo", 
+        "gpt-3.5-turbo-16k", 
+        "gpt-4", 
+        "gpt-4-turbo",
+        "gpt-4o"
+    );
     @Getter
     private int maxPromptSize = 1024;
     @Getter

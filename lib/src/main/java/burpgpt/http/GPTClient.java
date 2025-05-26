@@ -1,11 +1,14 @@
 package burpgpt.http;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import burp.MyBurpExtension;
@@ -76,7 +79,6 @@ public class GPTClient {
 
     // This code sends the selected request/response information to ChatGPT
     // and receives a list of potential vulnerabilities in response.
-    // TODO: Add a field to specify the maxTokens value
     try {
       GPTRequest gptRequest = new GPTRequest(selectedRequest, selectedResponse, model, 1, maxPromptSize);
       GPTResponse gptResponse = getCompletions(gptRequest, apiKey, model, prompt);
@@ -90,13 +92,24 @@ public class GPTClient {
       throws IOException {
     gptRequest.setPrompt(prompt);
 
-    String apiEndpoint = "https://api.openai.com/v1/completions";
+    String apiEndpoint = "https://api.openai.com/v1/chat/completions";
     MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    
+    // Create proper chat message format for the API
     JsonObject jsonObject = new JsonObject();
-    jsonObject.addProperty("prompt", gptRequest.getPrompt());
+    jsonObject.addProperty("model", model);
     jsonObject.addProperty("max_tokens", gptRequest.getMaxPromptSize());
     jsonObject.addProperty("n", gptRequest.getN());
-    jsonObject.addProperty("model", model);
+    
+    // Create message array with system message
+    JsonArray messagesArray = new JsonArray();
+    JsonObject systemMessage = new JsonObject();
+    systemMessage.addProperty("role", "user");
+    systemMessage.addProperty("content", gptRequest.getPrompt());
+    messagesArray.add(systemMessage);
+    
+    jsonObject.add("messages", messagesArray);
+    
     String jsonBody = gson.toJson(jsonObject);
 
     RequestBody body = RequestBody.create(jsonBody, JSON);
