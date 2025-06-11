@@ -38,7 +38,7 @@ public class MyBurpExtension implements BurpExtension, PropertyChangeListener {
         "gpt-4o"
     );
     @Getter
-    private int maxPromptSize = 1024;
+    private int maxPromptSize = 16384; // Default to 16k tokens for gpt-3.5-turbo-16k and gpt-4-turbo
     @Getter
     private String model = modelIds.get(0);
     @Getter

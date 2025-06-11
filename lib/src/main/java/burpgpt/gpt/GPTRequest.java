@@ -48,14 +48,24 @@ public class GPTRequest {
                 request, response, Boolean.toString(prompt.length() > maxPromptSize),
                 url, method, requestHeaders,
                 requestBody, responseHeaders, responseBody };
+                // maxCharLimit = maxPromptSize * 4;
+        if(request.length()+response.length() > maxPromptSize) {
+            if(response.length() > maxPromptSize / 2 - 100) {
+                replacements[1] = response.substring(0, (maxPromptSize / 4) -100) + "[...TRIMMED FOR LENGTH...]" + response.substring(response.length() - maxPromptSize / 4);
+            } 
+            if(request.length() > maxCharLimit / 2 - 100) {
+                replacements[0] = request.substring(0, (maxPromptSize / 4) - 100) + "[...TRIMMED FOR LENGTH...]" + request.substring(request.length() - maxPromptSize / 4);
+                
+            }
+        }
 
         for (int i = 0; i < placeholders.length; i++) {
             prompt = prompt.replace(placeholders[i], replacements[i]);
         }
 
-        if (prompt.length() > maxPromptSize) {
-            prompt = prompt.substring(0, maxPromptSize);
-        }
+        // if (prompt.length() > maxPromptSize) {
+        //     prompt = prompt.substring(0, maxPromptSize);
+        // }
 
         this.prompt = prompt;
     }
