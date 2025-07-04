@@ -53,7 +53,7 @@ public class GPTRequest {
             if(response.length() > maxPromptSize / 2 - 100) {
                 replacements[1] = response.substring(0, (maxPromptSize / 4) -100) + "[...TRIMMED FOR LENGTH...]" + response.substring(response.length() - maxPromptSize / 4);
             } 
-            if(request.length() > maxCharLimit / 2 - 100) {
+            if(request.length() > maxPromptSize / 2 - 100) {
                 replacements[0] = request.substring(0, (maxPromptSize / 4) - 100) + "[...TRIMMED FOR LENGTH...]" + request.substring(request.length() - maxPromptSize / 4);
                 
             }
